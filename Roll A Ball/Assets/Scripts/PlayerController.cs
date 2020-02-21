@@ -2,22 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// This line gives us access to Unity's UI classes, which we will need to update the counter at the top-left of the screen.
+using UnityEngine.UI;
+
 public class PlayerController : MonoBehaviour
 {
 	// Remember: public variables are visible in the inspector
 	// so we can edit them from outside of this script itself
 	public float speed;
 
+	// A reference to the Text component in the top left of the screen
+	public Text countText;
+	public Text winText;
+
 	// A reference to the Rigidbody component. Components are attached
 	// to GameObjects and can do various things. This script, PlayerController,
 	// is a component too!
 	private Rigidbody rb;
+
+	private int count;
 
 	private void Start()
 	{
 		// Here we get a reference to the Rigidbody component
 		// of the player object
 		rb = GetComponent<Rigidbody>();
+
+		count = 0;
+		SetCountText();
+		winText.text = string.Empty; // an empty string, equivalent to "" but more readable
 	}
 
 	private void FixedUpdate()
@@ -42,6 +55,23 @@ public class PlayerController : MonoBehaviour
 		{
 			// Now, we set the GameObject we are colliding with to be inactive.
 			other.gameObject.SetActive(false);
+
+			// Increment our count by one because we have just collected a Pick Up
+			count = count + 1;
+			SetCountText();
 		}
 	}
+
+	// Here is an example of the principle of abstraction. We are avoiding having
+	// duplicate code in our script by externalizing it into a separate function, SetCountText()
+	//
+	// See: https://en.wikipedia.org/wiki/Abstraction_(computer_science)
+	private void SetCountText ()
+	{
+		countText.text = "Count: " + count.ToString();
+		if (count >= 12)
+		{
+			winText.text = "You Win!";
+		}
+	} 
 }
